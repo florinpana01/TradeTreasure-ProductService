@@ -1,12 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put } from '@nestjs/common';
 import {ProductService} from './product.service';
+import {ClientProxy} from '@nestjs/microservices';
 
 @Controller('products')
 export class ProductController {
 
-    constructor(private productService: ProductService) {}
+    constructor(
+        private productService: ProductService,
+        @Inject('PRODUCT_SERVICE') private readonly client: ClientProxy
+        ) {}
     @Get()
     async all() {
+        this.client.emit('test', 'IF you see this message, RabbitMQ works');
         return this.productService.all();
     }
 
@@ -16,11 +21,21 @@ export class ProductController {
         @Body('description') description: string,
         @Body('user_id') user_id: number,
         ) {
-        return this.productService.create({
-            title,
-            description,
-            user_id
-        });
+            const product = await this.productService.create({
+                title, 
+                description,
+                user_id
+            });
+
+            this.client.emit('product created', product);
+
+            return product;
+
+        // return this.productService.create({
+        //     title,
+        //     description,
+        //     user_id
+        // });
     }
 
     @Get(':id')
@@ -34,14 +49,23 @@ export class ProductController {
         @Body('title') title: string,
         @Body('description') description: string,
     ){
-        return this.productService.update(id, {
+        await this.productService.update(id, {
             title,
             description
         });
+
+        const product = await this.productService.get(id);
+
+        this.client.emit('product updated', product);
+
+        return product;
     }
 
     @Delete(':id')
     async delete(@Param('id') id: number) {
-        return this.productService.delete(id);
+        await this.productService.delete(id);
+
+        this.client.emit('product deleted', id);
+
     }
 }
