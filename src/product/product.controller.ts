@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Inject, Param, Post, Put } from '@nestjs/common';
 import {ProductService} from './product.service';
-import {ClientProxy} from '@nestjs/microservices';
+import {ClientProxy, EventPattern} from '@nestjs/microservices';
 
 @Controller('products')
 export class ProductController {
@@ -9,63 +9,40 @@ export class ProductController {
         private productService: ProductService,
         @Inject('PRODUCT_SERVICE') private readonly client: ClientProxy
         ) {}
-    @Get()
-    async all() {
-        this.client.emit('test', 'IF you see this message, RabbitMQ works');
-        return this.productService.all();
-    }
+        @EventPattern('product_request_all')
+        async all() {
+            console.log('getting all products');
+            return await this.productService.all();
+        }
 
-    @Post()
-    async create(
-        @Body('title') title: string,
-        @Body('description') description: string,
-        @Body('user_id') user_id: number,
-        ) {
-            const product = await this.productService.create({
-                title, 
-                description,
-                user_id
-            });
+        @EventPattern('product_created_gateway')
+        async register(data) {
+            console.log("product_created_gateway data", data);
+            const newUser = await this.productService.create(data);
+            return newUser;
+        }
 
-            this.client.emit('product created', product);
+        @Get(':id')
+        async get(@Param('id') id: number) {
+            return this.productService.get(id);
+        }
 
+        @EventPattern('product_updated_gateway')
+        async update(data) {
+            console.log("product_updated_gateway", data);
+            await this.productService.update(data.id, data);
+            const product = await this.productService.get(data.id);
+            console.log("product updated", product);
+            this.client.emit('product_updated', product);
             return product;
+        }
 
-        // return this.productService.create({
-        //     title,
-        //     description,
-        //     user_id
-        // });
-    }
-
-    @Get(':id')
-    async get(@Param('id') id: number){
-        return this.productService.get(id);
-    }
-
-    @Put(':id')
-    async update(
-        @Param('id') id: number,
-        @Body('title') title: string,
-        @Body('description') description: string,
-    ){
-        await this.productService.update(id, {
-            title,
-            description
-        });
-
-        const product = await this.productService.get(id);
-
-        this.client.emit('product updated', product);
-
-        return product;
-    }
-
-    @Delete(':id')
-    async delete(@Param('id') id: number) {
-        await this.productService.delete(id);
-
-        this.client.emit('product deleted', id);
-
-    }
+        @EventPattern('product_deleted_gateway')
+        async delete(id) {
+            console.log("product deleted id", id);
+            this.productService.delete(id);
+            this.client.emit('product_deleted', id);
+            return HttpStatus.NO_CONTENT;
+            
+        }
 }
