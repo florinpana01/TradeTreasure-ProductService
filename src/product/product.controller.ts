@@ -16,15 +16,17 @@ export class ProductController {
         }
 
         @EventPattern('product_created_gateway')
-        async register(data) {
+        async create(data) {
             console.log("product_created_gateway data", data);
-            const newUser = await this.productService.create(data);
-            return newUser;
+            const newProduct = await this.productService.create(data);
+            return newProduct;
         }
 
-        @Get(':id')
+        @EventPattern('product_request_single')
         async get(@Param('id') id: number) {
-            return this.productService.get(id);
+            const requestedProduct = await this.productService.get(id);
+            console.log("getting requested product, ", id);
+            return requestedProduct;
         }
 
         @EventPattern('product_updated_gateway')
