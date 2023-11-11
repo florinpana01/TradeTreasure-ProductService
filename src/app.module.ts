@@ -3,6 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductModule } from './product/product.module';
 import {TypeOrmModule} from '@nestjs/typeorm';
+import { LikeController } from './like/like.controller';
+import { LikeService } from './like/like.service';
+import { LikeModule } from './like/like.module';
 
 @Module({
   imports: [
@@ -16,8 +19,9 @@ import {TypeOrmModule} from '@nestjs/typeorm';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    ProductModule],
-  controllers: [AppController],
-  providers: [AppService],
+    ProductModule,
+    LikeModule],
+  controllers: [AppController, LikeController],
+  providers: [AppService, LikeService],
 })
 export class AppModule {}
