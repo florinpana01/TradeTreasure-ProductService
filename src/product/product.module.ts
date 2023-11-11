@@ -7,17 +7,6 @@ import {ClientsModule, Transport} from '@nestjs/microservices';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'Totamealand1983',
-      database: 'tt-products',
-      autoLoadEntities: true,
-      synchronize: true,
-    }),
-    ProductModule,
     TypeOrmModule.forFeature([Product]),
     ClientsModule.register([
       {
@@ -25,7 +14,7 @@ import {ClientsModule, Transport} from '@nestjs/microservices';
         transport: Transport.RMQ,
         options: {
           urls: ['amqps://pjfufoya:LuO22_OIV_SIcvDewsRCbu_nTAUooYvt@kangaroo.rmq.cloudamqp.com/pjfufoya'],
-          queue: 'products_queue',
+          queue: 'products-queue',
           queueOptions: {
             durable: false
           },

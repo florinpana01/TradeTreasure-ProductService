@@ -19,9 +19,11 @@ export class ProductService {
     }
 
     async get(id: number): Promise<Product> {
-        return this.productRepository.findOneBy({id});
+        const post = await this.productRepository.findOne({
+            where: {id},
+        });
+        return post;
     }
-
     async update(id: number, data): Promise<any>{
         return this.productRepository.update(id, data);
     }

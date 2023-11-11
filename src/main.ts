@@ -14,7 +14,7 @@ const app = await NestFactory.createMicroservice(AppModule, {
   transport: Transport.RMQ,
   options: {
     urls: ['amqps://pjfufoya:LuO22_OIV_SIcvDewsRCbu_nTAUooYvt@kangaroo.rmq.cloudamqp.com/pjfufoya'],
-    queue: 'products_queue',
+    queue: 'products-queue-gateway',
     queueOptions: {
       durable: false
     },

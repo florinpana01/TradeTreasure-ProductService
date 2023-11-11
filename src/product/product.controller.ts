@@ -7,18 +7,20 @@ export class ProductController {
 
     constructor(
         private productService: ProductService,
-        @Inject('PRODUCT_SERVICE') private readonly client: ClientProxy
+        @Inject('PRODUCT_SERVICE') private client: ClientProxy,
         ) {}
         @EventPattern('product_request_all')
         async all() {
             console.log('getting all products');
-            return await this.productService.all();
+            return this.productService.all();
         }
+
 
         @EventPattern('product_created_gateway')
         async create(data) {
             console.log("product_created_gateway data", data);
             const newProduct = await this.productService.create(data);
+            this.client.emit('product_created', newProduct);
             return newProduct;
         }
 
