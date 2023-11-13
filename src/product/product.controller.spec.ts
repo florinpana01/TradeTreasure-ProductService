@@ -1,23 +1,22 @@
 import { HttpStatus } from '@nestjs/common';
 import { Client, ClientsModule, Transport } from '@nestjs/microservices';
 import { Test, TestingModule } from '@nestjs/testing';
-import { LikeController } from './like.controller';
-import { LikeService } from './like.service';
+import { ProductController } from './product.controller';
+import { ProductService } from './product.service';
 
 
 
+describe('ProductController', () => {
 
-describe('LikeController', () => {
+  let controller: ProductController;
 
-  let controller: LikeController;
-
-  const mockLikeService = {
+  const mockProductService = {
     create: jest.fn().mockImplementation((data) => ({ id: Date.now(), ...data })),
     update: jest.fn().mockImplementation((id, data) => ({ ...data })),
     get: jest.fn().mockImplementation((id) => ({
       id: 1,
       userId: 1,
-      productId: 1
+      content: "test content"
     })),
     delete: jest.fn().mockImplementation((id) => (HttpStatus.NO_CONTENT))
   }
@@ -27,28 +26,40 @@ describe('LikeController', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [ClientsModule.register([
         {
-          name: 'LIKE_SERVICE',
+          name: 'PRODUCT_SERVICE',
           transport: Transport.RMQ
         }
       ])],
-      controllers: [LikeController],
-      providers: [LikeService]
-    }).overrideProvider(LikeService).useValue(mockLikeService).compile();
-    controller = module.get<LikeController>(LikeController);
+      controllers: [ProductController],
+      providers: [ProductService]
+    }).overrideProvider(ProductService).useValue(mockProductService).compile();
+    controller = module.get<ProductController>(ProductController);
 
   });
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should create a new user', async () => {
+  it('should create a new product', async () => {
     const data = {
       userId: 1,
-      productId: 1
+      title: "test title",
+      description: "test description"
     }
     expect(await controller.create(data)).toEqual({
       id: expect.any(Number),
       ...data
+    })
+  })
+  it('should get one product', async () => {
+    const data = {
+        id:1,
+        userId: 1,
+        content: "test content",
+    }
+    await controller.create(data);
+    expect(await controller.get(1)).toEqual({
+        ...data
     })
   })
 });

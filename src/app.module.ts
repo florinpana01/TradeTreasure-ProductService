@@ -21,7 +21,7 @@ import { LikeModule } from './like/like.module';
     }),
     ProductModule,
     LikeModule],
-  controllers: [AppController, LikeController],
-  providers: [AppService, LikeService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
