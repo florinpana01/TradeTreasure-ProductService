@@ -10,6 +10,12 @@ export class LikeController {
 
     }
 
+    @EventPattern('like_request_all')
+    async all() {
+        console.log('getting all likes');
+        return this.likeService.all();
+    }
+
     @EventPattern('like_created_gateway')
     async create(data) {
         console.log("like_created_gateway data", data);

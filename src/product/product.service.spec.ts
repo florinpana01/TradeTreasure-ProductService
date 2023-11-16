@@ -13,7 +13,8 @@ describe('ProductService', () => {
         findOne: jest.fn().mockImplementation((id) => Promise.resolve({
             userId: 1,
             content: "test product",
-        }))
+        })),
+        delete: jest.fn().mockImplementation((id) => Promise.resolve(id)),
     }
 
     beforeEach(async () => {
@@ -54,16 +55,16 @@ describe('ProductService', () => {
         expect(expectedProduct).toBeDefined();
     });
 
-    // it('should delete one product', async () => {
-    //     const data = {
-    //         id:1,
-    //         userId: 1,
-    //         title: "test product",
-    //         description: "test description",
-    //     }
-    //     const createProduct = await service.create(data);
-    //     const deletedProduct = await service.delete(1);
-    //     expect(deletedProduct).toBeDefined();
-    // })
+    it('should delete one product', async () => {
+        const data = {
+            id:1,
+            userId: 1,
+            title: "test product",
+            description: "test description",
+        }
+        const createProduct = await service.create(data);
+        const deletedProduct = await service.delete(1);
+        expect(deletedProduct).toBeDefined();
+    })
 
 })

@@ -12,7 +12,7 @@ export class ProductController {
         @EventPattern('product_request_all')
         async all() {
             console.log('getting all products');
-            return this.productService.all();
+            return this.productService.allProduct();
         }
 
 
@@ -25,7 +25,7 @@ export class ProductController {
         }
 
         @EventPattern('product_request_single')
-        async get(@Param('id') id: number) {
+        async get(id: number) {
             const requestedProduct = await this.productService.get(id);
             console.log("getting requested product, ", id);
             return requestedProduct;
@@ -42,7 +42,7 @@ export class ProductController {
         }
 
         @EventPattern('product_deleted_gateway')
-        async delete(id) {
+        async delete(id: number) {
             console.log("product deleted id", id);
             this.productService.delete(id);
             this.client.emit('product_deleted', id);

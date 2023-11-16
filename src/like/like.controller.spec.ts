@@ -41,7 +41,7 @@ describe('LikeController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should create a new user', async () => {
+  it('should create a new like', async () => {
     const data = {
       userId: 1,
       productId: 1
