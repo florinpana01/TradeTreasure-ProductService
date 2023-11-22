@@ -11,11 +11,11 @@ import { LikeModule } from './like/like.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: '35.233.2.49',
       port: 3306,
       username: 'root',
       password: 'Totamealand1983',
-      database: 'tt-products',
+      database: 'tradetreasure-products',
       autoLoadEntities: true,
       synchronize: true,
     }),
