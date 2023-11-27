@@ -24,6 +24,9 @@ export class ProductService {
         });
         return post;
     }
+    async getByUser(user_id: number): Promise<Product[]> {
+        return this.productRepository.find({ where: { user_id } });
+    }
     async update(id: number, data): Promise<any>{
         return this.productRepository.update(id, data);
     }

@@ -31,6 +31,19 @@ export class ProductController {
             return requestedProduct;
         }
 
+        // get the products posted by one user
+        //@Get('user/:userId')
+        @EventPattern('products_by_user_gateway')
+        async getByUser(user_id: number) {
+            console.log(`getting all products for user ${user_id}`);
+            const products = await this.productService.getByUser(user_id);
+    
+            // Notify API gateway about the products
+            // this.client.emit('products_by_user', { userId, products });
+    
+            return products;
+        }
+
         @EventPattern('product_updated_gateway')
         async update(data) {
             console.log("product_updated_gateway", data);
