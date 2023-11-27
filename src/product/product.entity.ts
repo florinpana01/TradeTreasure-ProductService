@@ -12,6 +12,9 @@ export class Product {
     description: string;
 
     @Column()
+    category: string;
+
+    @Column()
     user_id: number;
 
     @Column({default: 0})
