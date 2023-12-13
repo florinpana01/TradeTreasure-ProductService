@@ -17,6 +17,9 @@ export class Product {
     @Column()
     user_id: number;
 
+    @Column('decimal', { precision: 10, scale: 2 })
+    price: number;
+
     @Column({default: 0})
     likes: number;
 }
